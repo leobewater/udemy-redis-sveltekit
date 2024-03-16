@@ -1,5 +1,7 @@
 Video: https://www.udemy.com/course/redis-the-complete-developers-guide-p/learn/lecture
 
+SSR is slow and the pages generation process is expensive. We're using Redis to store the pages in memory to speed up the generation process.
+
 
 # create-svelte
 
