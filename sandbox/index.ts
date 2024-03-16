@@ -1,5 +1,21 @@
 import 'dotenv/config';
 import { client } from '../src/services/redis';
 
-const run = async () => {};
+const run = async () => {
+	// Test HSET (hash set) == "HSET car color red year 1950"
+	await client.hSet('car', {
+		color: 'red',
+		year: 1950,
+		engine: { cylinders: 8 },
+		owner: null || '',
+		service: undefined || ''
+	});
+
+	const car = await client.hGetAll('car');
+	if (Object.keys(car).length === 0) {
+		console.log('Car not found, respond with 404');
+		return;
+	}
+	console.log(car);
+};
 run();
