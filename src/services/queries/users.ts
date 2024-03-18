@@ -1,4 +1,4 @@
-import { usersKey } from '$services/keys';
+import { usernamesUniqueKey, usersKey } from '$services/keys';
 import { client } from '$services/redis';
 import type { CreateUserAttrs } from '$services/types';
 import { genId } from '$services/utils';
@@ -14,9 +14,20 @@ export const getUserById = async (id: string) => {
 export const createUser = async (attrs: CreateUserAttrs) => {
 	const id = genId();
 
+	// Store all the registered users into the "usernamesUniqueKey"
+	// See if the username is already in the set of usernames
+	// If so, throw an error, otherwise continue
+	const exists = await client.sIsMember(usernamesUniqueKey(), attrs.username);
+	if (exists) {
+		throw new Error('Username is taken');
+	}
+
 	// Store user to Redis
 	await client.hSet(usersKey(id), serialize(attrs));
 
+  // Add new username to the Redis Sets
+  await client.sAdd(usernamesUniqueKey(), attrs.username);
+  
 	return id;
 };
 
