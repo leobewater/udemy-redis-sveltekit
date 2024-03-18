@@ -13,7 +13,7 @@ export const getItem = async (id: string) => {
 		return null;
   }
   
-  return deserialize(item);
+  return deserialize(id, item);
 };
 
 export const getItems = async (ids: string[]) => {};
