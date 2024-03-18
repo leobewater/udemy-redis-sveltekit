@@ -1,10 +1,20 @@
 import { itemsKey } from '$services/keys';
+import { deserialize } from '$services/queries/items/deserialize';
 import { serialize } from '$services/queries/items/serialize';
 import { client } from '$services/redis';
 import type { CreateItemAttrs } from '$services/types';
 import { genId } from '$services/utils';
 
-export const getItem = async (id: string) => {};
+export const getItem = async (id: string) => {
+  const item = await client.hGetAll(itemsKey(id));
+	
+  // If no items found, Redis returns an empty {}
+	if (Object.keys(item).length === 0) {
+		return null;
+  }
+  
+  return deserialize(item);
+};
 
 export const getItems = async (ids: string[]) => {};
 
